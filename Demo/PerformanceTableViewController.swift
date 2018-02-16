@@ -1,8 +1,13 @@
 import UIKit
 
 class PerformanceTableViewController: UITableViewController {
+
+  private static var rowsCount = 20
+  private var storage = [Double](repeating: 0, count: rowsCount)
+
   override func viewDidLoad() {
     super.viewDidLoad()
+    tableView.rowHeight = 150
   }
   
   // MARK: - UITableViewDataSource
@@ -11,8 +16,11 @@ class PerformanceTableViewController: UITableViewController {
     cellForRowAt indexPath: IndexPath) -> UITableViewCell {
       
     if let cell = tableView.dequeueReusableCell(withIdentifier: "performanceTableViewCell") as? PerformanceTableViewCell  {
-      let rating: Double = Double((indexPath as NSIndexPath).row) / 99 * 5
-      cell.update(rating)
+      let rating = storage[indexPath.row]
+      cell.update(rating, rowNumber: indexPath.row)
+      cell.cosmosView.didTouchCosmos = { [weak self] rating in
+        self?.storage[indexPath.row] = rating
+      }
       return cell
     }
       
@@ -20,6 +28,6 @@ class PerformanceTableViewController: UITableViewController {
   }
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return 100
+    return PerformanceTableViewController.rowsCount
   }
 }
